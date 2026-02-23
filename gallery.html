@@ -8,6 +8,13 @@
 </head>
 <body>
 
+<!-- 背景動画 -->
+<video id="bg-video" autoplay muted loop playsinline>
+    <source src="video/bg.mp4" type="video/mp4">
+</video>
+<div id="background-overlay"></div>
+
+<!-- ヘッダー（全ページ共通） -->
 <header>
     <div class="logo">Bunkasai 2026</div>
 
@@ -17,11 +24,11 @@
 
     <nav id="nav-menu">
         <ul>
-            <li><a href="index.html" class="nav-link">Home</a></li>
-            <li><a href="about.html" class="nav-link">About</a></li>
-            <li><a href="events.html" class="nav-link">Events</a></li>
-            <li><a href="gallery.html" class="nav-link">Gallery</a></li>
-            <li><a href="contact.html" class="nav-link">Contact</a></li>
+            <li><a href="index.html"  class="nav-link"><span>Home</span></a></li>
+            <li><a href="about.html"  class="nav-link"><span>About</span></a></li>
+            <li><a href="events.html" class="nav-link"><span>Events</span></a></li>
+            <li><a href="gallery.html" class="nav-link active"><span>Gallery</span></a></li>
+            <li><a href="contact.html" class="nav-link"><span>Contact</span></a></li>
 
             <li><button onclick="setLang('jp')">日本語</button></li>
             <li><button onclick="setLang('en')">English</button></li>
@@ -30,27 +37,78 @@
     </nav>
 </header>
 
-<div id="background"></div>
-
 <main>
+    <!-- 日本語 -->
     <section class="lang lang-jp">
         <h1>ギャラリー</h1>
-        <p>ここに写真ギャラリーを並べます。</p>
+        <p>写真フォルダに入れた画像が自動で表示されます。</p>
+        <p>表示モード：グリッド / リスト / スライド</p>
     </section>
 
+    <!-- 英語 -->
     <section class="lang lang-en">
         <h1>Gallery</h1>
-        <p>Place your photo gallery here.</p>
+        <p>Images placed in the folder will automatically appear here.</p>
+        <p>View modes: Grid / List / Slide</p>
     </section>
+
+    <!-- 表示切替ボタン -->
+    <div class="gallery-controls">
+        <button onclick="setGalleryView('grid')">Grid</button>
+        <button onclick="setGalleryView('list')">List</button>
+        <button onclick="setGalleryView('slide')">Slideshow</button>
+    </div>
+
+    <!-- 自動生成されるギャラリー -->
+    <div id="gallery" class="gallery-grid"></div>
 </main>
 
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox(event)">
+    <span id="lightbox-close" onclick="closeLightbox(event)">×</span>
+    <img id="lightbox-img" src="" alt="">
+    <div id="lightbox-prev" onclick="prevLightbox(event)">‹</div>
+    <div id="lightbox-next" onclick="nextLightbox(event)">›</div>
+</div>
+
+<!-- フッター -->
+<footer>
+    <p class="footer-text">
+        &copy; 2026 Bunkasai Committee. All rights reserved.
+    </p>
+</footer>
+
+<!-- AIチャット（サンプル質問付き） -->
 <div id="assistant-button" onclick="toggleAssistant()">💬</div>
 
 <div id="assistant-box">
     <div id="assistant-header">Bunkasai AI</div>
-    <div id="assistant-chat"></div>
-    <input id="assistant-input" type="text" placeholder="質問 / Question..."
-           onkeydown="if(event.key==='Enter') assistantSend()">
+
+    <div id="assistant-chat">
+        <div class="sample-list">
+            <div class="sample-title">サンプル質問 / Sample questions</div>
+
+            <!-- 日本語 -->
+            <button class="sample-q" onclick="sendSample('こんにちは')">こんにちは</button>
+            <button class="sample-q" onclick="sendSample('いつ')">いつ開催？</button>
+            <button class="sample-q" onclick="sendSample('場所')">場所は？</button>
+            <button class="sample-q" onclick="sendSample('入場料')">入場料は？</button>
+            <button class="sample-q" onclick="sendSample('企画')">どんな企画がある？</button>
+
+            <!-- 英語 -->
+            <button class="sample-q" onclick="sendSample('hello')">hello</button>
+            <button class="sample-q" onclick="sendSample('when')">when is it?</button>
+            <button class="sample-q" onclick="sendSample('where')">where is it?</button>
+            <button class="sample-q" onclick="sendSample('fee')">is it free?</button>
+            <button class="sample-q" onclick="sendSample('events')">what events?</button>
+        </div>
+    </div>
+
+    <div id="assistant-input-row">
+        <input id="assistant-input" type="text" placeholder="質問 / Question..."
+               onkeydown="if(event.key==='Enter') assistantSend()">
+        <button id="assistant-send" onclick="assistantSend()">▶</button>
+    </div>
 </div>
 
 <script src="js/main.js"></script>
