@@ -8,6 +8,13 @@
 </head>
 <body>
 
+<!-- 背景動画 -->
+<video id="bg-video" autoplay muted loop playsinline>
+    <source src="video/bg.mp4" type="video/mp4">
+</video>
+<div id="background-overlay"></div>
+
+<!-- ヘッダー（全ページ共通） -->
 <header>
     <div class="logo">Bunkasai 2026</div>
 
@@ -17,11 +24,11 @@
 
     <nav id="nav-menu">
         <ul>
-            <li><a href="index.html" class="nav-link">Home</a></li>
-            <li><a href="about.html" class="nav-link">About</a></li>
-            <li><a href="events.html" class="nav-link">Events</a></li>
-            <li><a href="gallery.html" class="nav-link">Gallery</a></li>
-            <li><a href="contact.html" class="nav-link">Contact</a></li>
+            <li><a href="index.html"  class="nav-link"><span>Home</span></a></li>
+            <li><a href="about.html"  class="nav-link"><span>About</span></a></li>
+            <li><a href="events.html" class="nav-link active"><span>Events</span></a></li>
+            <li><a href="gallery.html" class="nav-link"><span>Gallery</span></a></li>
+            <li><a href="contact.html" class="nav-link"><span>Contact</span></a></li>
 
             <li><button onclick="setLang('jp')">日本語</button></li>
             <li><button onclick="setLang('en')">English</button></li>
@@ -30,27 +37,119 @@
     </nav>
 </header>
 
-<div id="background"></div>
-
 <main>
+    <!-- 日本語 -->
     <section class="lang lang-jp">
         <h1>企画一覧</h1>
-        <p>ここにクラス企画やステージ企画などの一覧を書きます。</p>
+        <p>今年の文化祭では、クラス企画・ステージ企画・展示・飲食など、多彩なイベントが開催されます。</p>
+
+        <h2>クラス企画</h2>
+        <ul class="event-list">
+            <li>1年A組：ホラーハウス「闇に潜む影」</li>
+            <li>1年C組：射的＆輪投げ「縁日ランド」</li>
+            <li>2年B組：カフェ「Blue Latte」</li>
+            <li>3年A組：脱出ゲーム「時の迷宮」</li>
+        </ul>
+
+        <h2>ステージ企画</h2>
+        <ul class="event-list">
+            <li>バンド演奏（軽音部）</li>
+            <li>ダンスパフォーマンス（ダンス部）</li>
+            <li>漫才ライブ（有志）</li>
+            <li>ファッションショー（有志）</li>
+        </ul>
+
+        <h2>展示</h2>
+        <ul class="event-list">
+            <li>美術部：アートギャラリー</li>
+            <li>写真部：フォト展示「光と影」</li>
+            <li>科学部：実験ショー＆展示</li>
+        </ul>
+
+        <h2>飲食</h2>
+        <ul class="event-list">
+            <li>たこ焼き（2年D組）</li>
+            <li>クレープ（1年B組）</li>
+            <li>焼きそば（3年C組）</li>
+        </ul>
     </section>
 
+    <!-- 英語 -->
     <section class="lang lang-en">
         <h1>Events</h1>
-        <p>List all class events and stage events here.</p>
+        <p>This year's festival features class events, stage shows, exhibitions, and food stalls.</p>
+
+        <h2>Class Events</h2>
+        <ul class="event-list">
+            <li>Class 1A: Horror House “Shadows in the Dark”</li>
+            <li>Class 1C: Festival Games “Ennichi Land”</li>
+            <li>Class 2B: Café “Blue Latte”</li>
+            <li>Class 3A: Escape Room “Maze of Time”</li>
+        </ul>
+
+        <h2>Stage Performances</h2>
+        <ul class="event-list">
+            <li>Band Performance (Light Music Club)</li>
+            <li>Dance Show (Dance Club)</li>
+            <li>Comedy Live (Volunteers)</li>
+            <li>Fashion Show (Volunteers)</li>
+        </ul>
+
+        <h2>Exhibitions</h2>
+        <ul class="event-list">
+            <li>Art Club: Art Gallery</li>
+            <li>Photography Club: “Light & Shadow”</li>
+            <li>Science Club: Experiments & Displays</li>
+        </ul>
+
+        <h2>Food Stalls</h2>
+        <ul class="event-list">
+            <li>Takoyaki (Class 2D)</li>
+            <li>Crepes (Class 1B)</li>
+            <li>Yakisoba (Class 3C)</li>
+        </ul>
     </section>
 </main>
 
+<!-- フッター（著作権） -->
+<footer>
+    <p class="footer-text">
+        &copy; 2026 Bunkasai Committee. All rights reserved.
+    </p>
+</footer>
+
+<!-- AIチャット（サンプル質問付き） -->
 <div id="assistant-button" onclick="toggleAssistant()">💬</div>
 
 <div id="assistant-box">
     <div id="assistant-header">Bunkasai AI</div>
-    <div id="assistant-chat"></div>
-    <input id="assistant-input" type="text" placeholder="質問 / Question..."
-           onkeydown="if(event.key==='Enter') assistantSend()">
+
+    <div id="assistant-chat">
+        <!-- 最初に表示するサンプル質問一覧 -->
+        <div class="sample-list">
+            <div class="sample-title">サンプル質問 / Sample questions</div>
+
+            <!-- 日本語 -->
+            <button class="sample-q" onclick="sendSample('こんにちは')">こんにちは</button>
+            <button class="sample-q" onclick="sendSample('いつ')">いつ開催？</button>
+            <button class="sample-q" onclick="sendSample('場所')">場所は？</button>
+            <button class="sample-q" onclick="sendSample('入場料')">入場料は？</button>
+            <button class="sample-q" onclick="sendSample('企画')">どんな企画がある？</button>
+
+            <!-- 英語 -->
+            <button class="sample-q" onclick="sendSample('hello')">hello</button>
+            <button class="sample-q" onclick="sendSample('when')">when is it?</button>
+            <button class="sample-q" onclick="sendSample('where')">where is it?</button>
+            <button class="sample-q" onclick="sendSample('fee')">is it free?</button>
+            <button class="sample-q" onclick="sendSample('events')">what events?</button>
+        </div>
+    </div>
+
+    <div id="assistant-input-row">
+        <input id="assistant-input" type="text" placeholder="質問 / Question..."
+               onkeydown="if(event.key==='Enter') assistantSend()">
+        <button id="assistant-send" onclick="assistantSend()">▶</button>
+    </div>
 </div>
 
 <script src="js/main.js"></script>
