@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunkasai 2026 - Home</title>
+    <link id="theme-style" rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">Bunkasai 2026</div>
+
+    <div class="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+    </div>
+
+    <nav id="nav-menu">
+        <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="events.html" class="nav-link">Events</a></li>
+            <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+
+            <li><button onclick="setLang('jp')">日本語</button></li>
+            <li><button onclick="setLang('en')">English</button></li>
+            <li><button onclick="toggleDarkMode()">Dark</button></li>
+        </ul>
+    </nav>
+</header>
+
+<div id="background"></div>
+
+<main>
+    <!-- 日本語 -->
+    <section class="lang lang-jp">
+        <h1>文化祭 2026</h1>
+        <p>準備中です</p>
+        <p id="countdown-jp" class="small"></p>
+    </section>
+
+    <!-- 英語 -->
+    <section class="lang lang-en">
+        <h1>Bunkasai 2026</h1>
+        <p>Coming Soon...</p>
+        <p id="countdown-en" class="small"></p>
+    </section>
+</main>
+
+<!-- AIチャット -->
+<div id="assistant-button" onclick="toggleAssistant()">💬</div>
+
+<div id="assistant-box">
+    <div id="assistant-header">Bunkasai AI</div>
+    <div id="assistant-chat"></div>
+    <input id="assistant-input" type="text" placeholder="質問 / Question..."
+           onkeydown="if(event.key==='Enter') assistantSend()">
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
