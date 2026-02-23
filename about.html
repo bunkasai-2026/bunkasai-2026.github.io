@@ -8,6 +8,13 @@
 </head>
 <body>
 
+<!-- 背景動画 -->
+<video id="bg-video" autoplay muted loop playsinline>
+    <source src="video/bg.mp4" type="video/mp4">
+</video>
+<div id="background-overlay"></div>
+
+<!-- ヘッダー（全ページ共通） -->
 <header>
     <div class="logo">Bunkasai 2026</div>
 
@@ -17,11 +24,11 @@
 
     <nav id="nav-menu">
         <ul>
-            <li><a href="index.html" class="nav-link">Home</a></li>
-            <li><a href="about.html" class="nav-link">About</a></li>
-            <li><a href="events.html" class="nav-link">Events</a></li>
-            <li><a href="gallery.html" class="nav-link">Gallery</a></li>
-            <li><a href="contact.html" class="nav-link">Contact</a></li>
+            <li><a href="index.html"  class="nav-link"><span>Home</span></a></li>
+            <li><a href="about.html"  class="nav-link active"><span>About</span></a></li>
+            <li><a href="events.html" class="nav-link"><span>Events</span></a></li>
+            <li><a href="gallery.html" class="nav-link"><span>Gallery</span></a></li>
+            <li><a href="contact.html" class="nav-link"><span>Contact</span></a></li>
 
             <li><button onclick="setLang('jp')">日本語</button></li>
             <li><button onclick="setLang('en')">English</button></li>
@@ -30,27 +37,65 @@
     </nav>
 </header>
 
-<div id="background"></div>
-
 <main>
+    <!-- 日本語 -->
     <section class="lang lang-jp">
         <h1>この文化祭について</h1>
-        <p>ここに文化祭の概要やテーマなどを書きます。</p>
+        <p>文化祭2026は、「つながる・ひろがる・未来へ」をテーマに開催されます。</p>
+        <p>生徒一人ひとりの個性が輝き、来場者のみなさんと一緒に楽しめる企画を多数用意しています。</p>
+        <p>実行委員会は、準備から当日運営まで全力で取り組んでいます。</p>
+        <p>ぜひ、今年の文化祭をお楽しみください！</p>
     </section>
 
+    <!-- 英語 -->
     <section class="lang lang-en">
         <h1>About This Festival</h1>
-        <p>Write the overview and theme of the festival here.</p>
+        <p>Bunkasai 2026 is held under the theme “Connect, Expand, Into the Future”.</p>
+        <p>Each student brings their creativity to life, offering many events that visitors can enjoy together.</p>
+        <p>The festival committee works hard from planning to the day of the event.</p>
+        <p>We hope you enjoy this year’s festival!</p>
     </section>
 </main>
 
+<!-- フッター（著作権） -->
+<footer>
+    <p class="footer-text">
+        &copy; 2026 Bunkasai Committee. All rights reserved.
+    </p>
+</footer>
+
+<!-- AIチャット（サンプル質問付き） -->
 <div id="assistant-button" onclick="toggleAssistant()">💬</div>
 
 <div id="assistant-box">
     <div id="assistant-header">Bunkasai AI</div>
-    <div id="assistant-chat"></div>
-    <input id="assistant-input" type="text" placeholder="質問 / Question..."
-           onkeydown="if(event.key==='Enter') assistantSend()">
+
+    <div id="assistant-chat">
+        <!-- 最初に表示するサンプル質問一覧 -->
+        <div class="sample-list">
+            <div class="sample-title">サンプル質問 / Sample questions</div>
+
+            <!-- 日本語 -->
+            <button class="sample-q" onclick="sendSample('こんにちは')">こんにちは</button>
+            <button class="sample-q" onclick="sendSample('いつ')">いつ開催？</button>
+            <button class="sample-q" onclick="sendSample('場所')">場所は？</button>
+            <button class="sample-q" onclick="sendSample('入場料')">入場料は？</button>
+            <button class="sample-q" onclick="sendSample('企画')">どんな企画がある？</button>
+
+            <!-- 英語 -->
+            <button class="sample-q" onclick="sendSample('hello')">hello</button>
+            <button class="sample-q" onclick="sendSample('when')">when is it?</button>
+            <button class="sample-q" onclick="sendSample('where')">where is it?</button>
+            <button class="sample-q" onclick="sendSample('fee')">is it free?</button>
+            <button class="sample-q" onclick="sendSample('events')">what events?</button>
+        </div>
+    </div>
+
+    <div id="assistant-input-row">
+        <input id="assistant-input" type="text" placeholder="質問 / Question..."
+               onkeydown="if(event.key==='Enter') assistantSend()">
+        <button id="assistant-send" onclick="assistantSend()">▶</button>
+    </div>
 </div>
 
 <script src="js/main.js"></script>
