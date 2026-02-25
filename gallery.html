@@ -4,8 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bunkasai 2026 - Gallery</title>
+
+    <!-- メインCSS -->
     <link id="theme-style" rel="stylesheet" href="css/style.css">
+
+    <!-- 右クリック禁止・ドラッグ禁止 -->
+    <script>
+        document.addEventListener("contextmenu", e => e.preventDefault());
+        document.addEventListener("dragstart", e => e.preventDefault());
+        document.addEventListener("selectstart", e => e.preventDefault());
+    </script>
+
+    <style>
+        /* 背景動画 */
+        #bg-video {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        #background-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: -1;
+        }
+
+        /* ギャラリー */
+        #gallery {
+            display: grid;
+            gap: 15px;
+            margin: 20px;
+        }
+        .gallery-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        .gallery-item {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: auto;
+            pointer-events: none; /* 保存防止 */
+        }
+
+        /* 説明文 */
+        .caption {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        /* タグボタン */
+        #tag-filter {
+            text-align: center;
+            margin: 20px 0;
+        }
+        #tag-filter button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: none;
+            background: #444;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #tag-filter button:hover {
+            background: #666;
+        }
+
+        /* Lightbox（画像＋動画対応） */
+        #lightbox {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99998;
+        }
+        #lightbox img,
+        #lightbox video {
+            max-width: 90%;
+            max-height: 80%;
+        }
+        #lightbox-close {
+            position: absolute;
+            top: 20px; right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+        }
+        #lightbox-prev,
+        #lightbox-next {
+            position: absolute;
+            top: 50%;
+            font-size: 50px;
+            color: white;
+            cursor: pointer;
+        }
+        #lightbox-prev { left: 30px; }
+        #lightbox-next { right: 30px; }
+
+        /* チャットが隠れないように */
+        #assistant-button,
+        #assistant-box {
+            z-index: 99999 !important;
+        }
+    </style>
 </head>
+
 <body>
 
 <!-- 背景動画 -->
@@ -14,21 +129,19 @@
 </video>
 <div id="background-overlay"></div>
 
-<!-- ヘッダー（全ページ共通） -->
 <header>
     <div class="logo">Bunkasai 2026</div>
-
     <div class="hamburger" onclick="toggleMenu()">
         <span></span><span></span><span></span>
     </div>
 
     <nav id="nav-menu">
         <ul>
-            <li><a href="index.html"  class="nav-link"><span>Home</span></a></li>
-            <li><a href="about.html"  class="nav-link"><span>About</span></a></li>
-            <li><a href="events.html" class="nav-link"><span>Events</span></a></li>
-            <li><a href="gallery.html" class="nav-link active"><span>Gallery</span></a></li>
-            <li><a href="contact.html" class="nav-link"><span>Contact</span></a></li>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="events.html" class="nav-link">Events</a></li>
+            <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
 
             <li><button onclick="setLang('jp')">日本語</button></li>
             <li><button onclick="setLang('en')">English</button></li>
@@ -38,79 +151,45 @@
 </header>
 
 <main>
-    <!-- 日本語 -->
     <section class="lang lang-jp">
         <h1>ギャラリー</h1>
         <p>写真フォルダに入れた画像が自動で表示されます。</p>
-        <p>表示モード：グリッド / リスト / スライド</p>
     </section>
 
-    <!-- 英語 -->
     <section class="lang lang-en">
         <h1>Gallery</h1>
         <p>Images placed in the folder will automatically appear here.</p>
-        <p>View modes: Grid / List / Slide</p>
     </section>
 
-    <!-- 表示切替ボタン -->
-    <div class="gallery-controls">
-        <button onclick="setGalleryView('grid')">Grid</button>
-        <button onclick="setGalleryView('list')">List</button>
-        <button onclick="setGalleryView('slide')">Slideshow</button>
-    </div>
+    <!-- タグフィルター -->
+    <div id="tag-filter"></div>
 
-    <!-- 自動生成されるギャラリー -->
+    <!-- ギャラリー -->
     <div id="gallery" class="gallery-grid"></div>
 </main>
 
-<!-- Lightbox -->
+<!-- Lightbox（画像＋動画対応） -->
 <div id="lightbox" onclick="closeLightbox(event)">
     <span id="lightbox-close" onclick="closeLightbox(event)">×</span>
+
     <img id="lightbox-img" src="" alt="">
+    <video id="lightbox-video" controls></video>
+
     <div id="lightbox-prev" onclick="prevLightbox(event)">‹</div>
     <div id="lightbox-next" onclick="nextLightbox(event)">›</div>
 </div>
 
-<!-- フッター -->
-<footer>
-    <p class="footer-text">
-        &copy; 2026 Bunkasai Committee. All rights reserved.
-    </p>
-</footer>
-
-<!-- AIチャット（サンプル質問付き） -->
+<!-- チャット -->
 <div id="assistant-button" onclick="toggleAssistant()">💬</div>
-
 <div id="assistant-box">
     <div id="assistant-header">Bunkasai AI</div>
-
-    <div id="assistant-chat">
-        <div class="sample-list">
-            <div class="sample-title">サンプル質問 / Sample questions</div>
-
-            <!-- 日本語 -->
-            <button class="sample-q" onclick="sendSample('こんにちは')">こんにちは</button>
-            <button class="sample-q" onclick="sendSample('いつ')">いつ開催？</button>
-            <button class="sample-q" onclick="sendSample('場所')">場所は？</button>
-            <button class="sample-q" onclick="sendSample('入場料')">入場料は？</button>
-            <button class="sample-q" onclick="sendSample('企画')">どんな企画がある？</button>
-
-            <!-- 英語 -->
-            <button class="sample-q" onclick="sendSample('hello')">hello</button>
-            <button class="sample-q" onclick="sendSample('when')">when is it?</button>
-            <button class="sample-q" onclick="sendSample('where')">where is it?</button>
-            <button class="sample-q" onclick="sendSample('fee')">is it free?</button>
-            <button class="sample-q" onclick="sendSample('events')">what events?</button>
-        </div>
-    </div>
-
+    <div id="assistant-chat"></div>
     <div id="assistant-input-row">
-        <input id="assistant-input" type="text" placeholder="質問 / Question..."
-               onkeydown="if(event.key==='Enter') assistantSend()">
+        <input id="assistant-input" type="text" onkeydown="if(event.key==='Enter') assistantSend()">
         <button id="assistant-send" onclick="assistantSend()">▶</button>
     </div>
 </div>
 
-<script src="js/main.js"></script>
+<script src="js/menu.js"></script>
 </body>
 </html>
