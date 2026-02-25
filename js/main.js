@@ -1,17 +1,25 @@
 /* ============================================================
-   ギャラリー自動読み込み（GitHub API版 / フル機能）
+   ギャラリー自動読み込み（GitHub API版 / フル機能＋タグ）
 ============================================================ */
 
-let galleryImages = [];  // {src, type, caption}
+let galleryImages = [];  // {src, type, caption, tags}
 let currentLightboxIndex = 0;
 
 /* ファイル名 → 説明文に変換 */
 function filenameToCaption(name) {
     return name
         .replace(/\.[^/.]+$/, "")   // 拡張子削除
+        .replace(/#.*/g, "")        // タグ部分削除
         .replace(/[_-]/g, " ")      // _ と - をスペースに
         .replace(/\s+/g, " ")       // 連続スペース削除
         .trim();
+}
+
+/* ファイル名 → タグ抽出 (#tag1#tag2...) */
+function extractTags(filename) {
+    const base = filename.replace(/\.[^/.]+$/, "");
+    const parts = base.split("#");
+    return parts.slice(1); // 1個目は名前、2個目以降がタグ
 }
 
 async function loadGalleryImages() {
@@ -30,25 +38,59 @@ async function loadGalleryImages() {
             .map(item => ({
                 src: item.download_url,
                 type: /\.(mp4|webm)$/i.test(item.name) ? "video" : "image",
-                caption: filenameToCaption(item.name)
+                caption: filenameToCaption(item.name),
+                tags: extractTags(item.name)
             }));
 
         /* ランダム表示 */
         galleryImages.sort(() => Math.random() - 0.5);
 
+        renderTagButtons();
         renderGallery();
     } catch (e) {
         console.error("画像読み込みエラー:", e);
     }
 }
 
-function renderGallery() {
-    const gallery = document.getElementById("gallery");
-    if (!gallery) return;
+/* ============================================================
+   タグボタン生成
+============================================================ */
 
+function renderTagButtons() {
+    const container = document.getElementById("tag-filter");
+    if (!container) return;
+
+    const tagSet = new Set();
+    galleryImages.forEach(img => img.tags.forEach(t => tagSet.add(t)));
+
+    container.innerHTML = "";
+
+    /* ALL ボタン */
+    const allBtn = document.createElement("button");
+    allBtn.textContent = "ALL";
+    allBtn.onclick = () => filterByTag(null);
+    container.appendChild(allBtn);
+
+    /* タグボタン */
+    tagSet.forEach(tag => {
+        const btn = document.createElement("button");
+        btn.textContent = tag;
+        btn.onclick = () => filterByTag(tag);
+        container.appendChild(btn);
+    });
+}
+
+/* ============================================================
+   タグフィルター
+============================================================ */
+
+function filterByTag(tag) {
+    const gallery = document.getElementById("gallery");
     gallery.innerHTML = "";
 
-    galleryImages.forEach((item, index) => {
+    const filtered = galleryImages.filter(img => !tag || img.tags.includes(tag));
+
+    filtered.forEach((item, index) => {
         const div = document.createElement("div");
         div.className = "gallery-item";
         div.onclick = () => openLightbox(index);
@@ -66,7 +108,6 @@ function renderGallery() {
             div.appendChild(vid);
         }
 
-        /* 説明文 */
         const cap = document.createElement("div");
         cap.className = "caption";
         cap.textContent = item.caption;
@@ -74,6 +115,14 @@ function renderGallery() {
 
         gallery.appendChild(div);
     });
+}
+
+/* ============================================================
+   通常ギャラリー描画
+============================================================ */
+
+function renderGallery() {
+    filterByTag(null); // ALL 表示
 }
 
 loadGalleryImages();
