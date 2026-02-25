@@ -5,305 +5,447 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bunkasai 2026 - Gallery</title>
 
+<!-- CSS は STEP2 で追加するのでここは空のまま -->
 <style>
-    * { box-sizing: border-box; }
-    body {
-        margin: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #000;
-        color: #fff;
-        user-select: none;
-        overflow-x: hidden;
-    }
-    img, video {
-        pointer-events: none;
-    }
+   /* ===========================
+   全体
+=========================== */
+* { box-sizing: border-box; }
 
-    header {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        background: rgba(0,0,0,0.85);
-        backdrop-filter: blur(8px);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 16px;
-    }
-    .logo {
-        font-weight: 700;
-        letter-spacing: 1px;
-    }
-    nav {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-    }
-    nav a {
-        color: #ccc;
-        text-decoration: none;
-        font-size: 14px;
-    }
-    nav a.active {
-        color: #fff;
-        font-weight: 600;
-    }
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    user-select: none;
+    overflow-x: hidden;
+}
 
-    .lang-toggle button,
-    .theme-toggle button {
-        margin-left: 6px;
-        padding: 4px 8px;
-        font-size: 12px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        background: #333;
-        color: #fff;
+img, video {
+    pointer-events: none;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 20px;
+}
+
+nav.desktop {
+    display: flex;
+    gap: 16px;
+}
+
+nav.desktop a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+nav.desktop a.active {
+    color: #fff;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lang-toggle button,
+.theme-toggle button {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+}
+
+/* ハンバーガー */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 22px;
+    height: 3px;
+    background: #fff;
+}
+
+/* モバイルメニュー */
+#nav-menu-mobile {
+    display: none;
+    position: fixed;
+    top: 55px;
+    right: 10px;
+    background: rgba(0,0,0,0.95);
+    padding: 16px;
+    border-radius: 10px;
+    z-index: 1001;
+}
+
+#nav-menu-mobile a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+/* ===========================
+   MAIN
+=========================== */
+main {
+    padding: 16px;
+}
+
+h1 {
+    text-align: center;
+    margin: 10px 0 5px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+/* ===========================
+   TAG FILTER
+=========================== */
+#tag-filter {
+    text-align: center;
+    padding: 10px;
+}
+
+#tag-filter button {
+    margin: 4px;
+    padding: 8px 14px;
+    border: none;
+    background: #333;
+    color: #fff;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+#tag-filter button.active {
+    background: #0af;
+    color: #000;
+}
+
+/* ===========================
+   GALLERY
+=========================== */
+#gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    padding: 10px;
+}
+
+.gallery-item {
+    cursor: pointer;
+    text-align: center;
+    background: #111;
+    border-radius: 10px;
+    padding: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gallery-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+}
+
+.gallery-item img,
+.gallery-item video {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.caption {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #ddd;
+}
+
+/* ===========================
+   LIGHTBOX
+=========================== */
+#lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 2000;
+}
+
+#lightbox img,
+#lightbox video {
+    max-width: 90%;
+    max-height: 70%;
+}
+
+#lightbox-caption {
+    margin-top: 12px;
+    font-size: 15px;
+    color: #ddd;
+    text-align: center;
+}
+
+#lightbox-close {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+#lightbox-prev,
+#lightbox-next {
+    position: absolute;
+    top: 50%;
+    font-size: 50px;
+    cursor: pointer;
+    transform: translateY(-50%);
+    user-select: none;
+}
+
+#lightbox-prev { left: 24px; }
+#lightbox-next { right: 24px; }
+
+/* ===========================
+   ASSISTANT
+=========================== */
+#assistant-button {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: radial-gradient(circle at 30% 30%, #0ff, #06f);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 3000;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+}
+
+#assistant-box {
+    position: fixed;
+    right: 16px;
+    bottom: 80px;
+    width: 300px;
+    max-height: 420px;
+    background: #111;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 3001;
+}
+
+#assistant-header {
+    padding: 8px 10px;
+    background: #222;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.assistant-close {
+    cursor: pointer;
+}
+
+/* ▼ カテゴリ別サンプル質問 */
+#assistant-samples {
+    padding: 6px 8px;
+    background: #181818;
+    border-bottom: 1px solid #333;
+    font-size: 12px;
+}
+
+#assistant-samples summary {
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.sample-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 4px 0 6px;
+}
+
+.sample-group button {
+    padding: 4px 8px;
+    font-size: 11px;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* チャット表示 */
+#assistant-chat {
+    flex: 1;
+    padding: 8px;
+    overflow-y: auto;
+    font-size: 12px;
+}
+
+.chat-row {
+    margin-bottom: 6px;
+    display: flex;
+}
+
+.chat-row.user {
+    justify-content: flex-end;
+}
+
+.chat-row.bot {
+    justify-content: flex-start;
+}
+
+.bubble {
+    max-width: 80%;
+    padding: 6px 8px;
+    border-radius: 10px;
+}
+
+.bubble.user {
+    background: #0af;
+    color: #000;
+}
+
+.bubble.bot {
+    background: #333;
+    color: #fff;
+}
+
+/* 入力欄 */
+#assistant-input-area {
+    display: flex;
+    border-top: 1px solid #333;
+}
+
+#assistant-input {
+    flex: 1;
+    border: none;
+    padding: 6px;
+    font-size: 12px;
+    background: #111;
+    color: #fff;
+}
+
+#assistant-send {
+    width: 60px;
+    border: none;
+    background: #0af;
+    color: #000;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* ===========================
+   DARK MODE
+=========================== */
+body.dark {
+    background: #050505;
+    color: #f5f5f5;
+}
+
+body.dark .gallery-item {
+    background: #151515;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+
+    nav.desktop {
+        display: none;
     }
 
     .hamburger {
-        display: none;
-        flex-direction: column;
-        gap: 4px;
-        cursor: pointer;
+        display: flex;
     }
-    .hamburger span {
-        width: 20px;
-        height: 2px;
-        background: #fff;
-    }
+
     #nav-menu-mobile {
-        display: none;
-        position: fixed;
-        top: 50px;
-        right: 10px;
-        background: rgba(0,0,0,0.95);
-        padding: 10px 16px;
-        border-radius: 8px;
-        z-index: 1001;
+        width: 80%;
+        right: 10%;
+        padding: 20px;
     }
+
     #nav-menu-mobile a {
-        display: block;
-        color: #fff;
-        text-decoration: none;
-        margin: 6px 0;
-        font-size: 14px;
+        font-size: 18px;
+        padding: 12px 0;
     }
 
-    main {
-        padding: 16px;
-    }
-
-    h1 {
-        text-align: center;
-        margin: 10px 0 5px;
-    }
-    p.subtitle {
-        text-align: center;
-        font-size: 13px;
-        color: #aaa;
-        margin: 0 0 10px;
-    }
-
-    /* タグボタン */
-    #tag-filter {
-        text-align: center;
-        padding: 10px;
-    }
-    #tag-filter button {
-        margin: 4px;
-        padding: 6px 12px;
-        border: none;
-        background: #333;
-        color: #fff;
-        border-radius: 999px;
-        cursor: pointer;
-        font-size: 12px;
-    }
-    #tag-filter button.active {
-        background: #0af;
-        color: #000;
-    }
-
-    /* ギャラリー */
+    /* ギャラリー大きく */
     #gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 12px;
-        padding: 10px;
-    }
-    .gallery-item {
-        cursor: pointer;
-        text-align: center;
-        background: #111;
-        border-radius: 10px;
-        padding: 8px;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .gallery-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    }
-    .gallery-item img,
-    .gallery-item video {
-        width: 100%;
-        border-radius: 8px;
-    }
-    .caption {
-        margin-top: 6px;
-        font-size: 13px;
-        color: #ddd;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
     }
 
-    /* Lightbox */
-    #lightbox {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.9);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 2000;
+    #tag-filter button {
+        font-size: 16px;
+        padding: 10px 18px;
     }
-    #lightbox img,
-    #lightbox video {
-        max-width: 90%;
-        max-height: 80%;
+
+    .caption {
+        font-size: 15px;
     }
-    #lightbox-close {
-        position: absolute;
-        top: 16px;
-        right: 24px;
-        font-size: 32px;
-        cursor: pointer;
-    }
+
     #lightbox-prev,
     #lightbox-next {
-        position: absolute;
-        top: 50%;
-        font-size: 40px;
-        cursor: pointer;
-        transform: translateY(-50%);
-        user-select: none;
-    }
-    #lightbox-prev { left: 24px; }
-    #lightbox-next { right: 24px; }
-
-    /* チャット */
-    #assistant-button {
-        position: fixed;
-        right: 16px;
-        bottom: 16px;
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        border: none;
-        background: radial-gradient(circle at 30% 30%, #0ff, #06f);
-        color: #fff;
-        font-size: 22px;
-        cursor: pointer;
-        z-index: 3000;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    }
-    #assistant-box {
-        position: fixed;
-        right: 16px;
-        bottom: 80px;
-        width: 280px;
-        max-height: 360px;
-        background: #111;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-        display: none;
-        flex-direction: column;
-        overflow: hidden;
-        z-index: 3001;
-    }
-    #assistant-header {
-        padding: 8px 10px;
-        background: #222;
-        font-size: 13px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    #assistant-chat {
-        flex: 1;
-        padding: 8px;
-        overflow-y: auto;
-        font-size: 12px;
-    }
-    .chat-row {
-        margin-bottom: 6px;
-        display: flex;
-    }
-    .chat-row.user {
-        justify-content: flex-end;
-    }
-    .chat-row.bot {
-        justify-content: flex-start;
-    }
-    .bubble {
-        max-width: 80%;
-        padding: 6px 8px;
-        border-radius: 10px;
-    }
-    .bubble.user {
-        background: #0af;
-        color: #000;
-    }
-    .bubble.bot {
-        background: #333;
-        color: #fff;
-    }
-    #assistant-input-area {
-        display: flex;
-        border-top: 1px solid #333;
-    }
-    #assistant-input {
-        flex: 1;
-        border: none;
-        padding: 6px;
-        font-size: 12px;
-        background: #111;
-        color: #fff;
-    }
-    #assistant-send {
-        width: 60px;
-        border: none;
-        background: #0af;
-        color: #000;
-        font-size: 12px;
-        cursor: pointer;
+        font-size: 60px;
     }
 
-    /* ダークモード用クラス（簡易） */
-    body.dark {
-        background: #050505;
-        color: #f5f5f5;
+    #lightbox-close {
+        font-size: 48px;
     }
-    body.dark .gallery-item {
-        background: #151515;
-    }
+}
 
-    @media (max-width: 768px) {
-        nav.desktop {
-            display: none;
-        }
-        .hamburger {
-            display: flex;
-        }
-    }
-    @media (min-width: 769px) {
-        #nav-menu-mobile {
-            display: none !important;
-        }
-    }
 </style>
-</head>
 
+</head>
 <body>
 
+<!-- ===========================
+      HEADER（ロゴ・メニュー）
+=========================== -->
 <header>
     <div class="logo">Bunkasai 2026</div>
 
@@ -315,20 +457,23 @@
         <a href="contact.html">Contact</a>
     </nav>
 
-    <div style="display:flex; align-items:center; gap:6px;">
+    <div class="header-right">
         <div class="lang-toggle">
             <button onclick="setLang('jp')">日本語</button>
             <button onclick="setLang('en')">English</button>
         </div>
+
         <div class="theme-toggle">
             <button onclick="toggleTheme()">Dark</button>
         </div>
+
         <div class="hamburger" onclick="toggleMobileMenu()">
             <span></span><span></span><span></span>
         </div>
     </div>
 </header>
 
+<!-- モバイルメニュー -->
 <div id="nav-menu-mobile">
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
@@ -337,48 +482,76 @@
     <a href="contact.html">Contact</a>
 </div>
 
+<!-- ===========================
+      MAIN（ギャラリー）
+=========================== -->
 <main>
     <h1 id="title-text">Gallery</h1>
     <p class="subtitle" id="subtitle-text">
         GitHub の img フォルダから自動で画像・動画を読み込みます。
     </p>
 
+    <!-- タグボタン -->
     <div id="tag-filter"></div>
+
+    <!-- ギャラリー本体 -->
     <div id="gallery"></div>
 </main>
 
-<!-- Lightbox -->
+<!-- ===========================
+      LIGHTBOX（画像/動画）
+=========================== -->
 <div id="lightbox" onclick="closeLightbox(event)">
     <span id="lightbox-close" onclick="closeLightbox(event)">×</span>
     <img id="lightbox-img">
     <video id="lightbox-video" controls></video>
+
+    <!-- 画像説明（タグから生成） -->
+    <div id="lightbox-caption"></div>
+
     <div id="lightbox-prev" onclick="prevLightbox(event)">‹</div>
     <div id="lightbox-next" onclick="nextLightbox(event)">›</div>
 </div>
 
-<!-- Assistant -->
+<!-- ===========================
+      ASSISTANT（AI風チャット）
+=========================== -->
 <button id="assistant-button" onclick="toggleAssistant()">💬</button>
+
 <div id="assistant-box">
     <div id="assistant-header">
         <span id="assistant-title">Bunkasai Assistant</span>
-        <span style="cursor:pointer;" onclick="toggleAssistant()">×</span>
+        <span class="assistant-close" onclick="toggleAssistant()">×</span>
     </div>
+
+    <!-- ▼ カテゴリ別サンプル質問（STEP3で中身を追加） -->
+    <div id="assistant-samples"></div>
+
+    <!-- チャット表示 -->
     <div id="assistant-chat"></div>
+
+    <!-- 入力欄 -->
     <div id="assistant-input-area">
         <input id="assistant-input" type="text" placeholder="質問を入力..." onkeydown="if(event.key==='Enter') assistantSend();">
         <button id="assistant-send" onclick="assistantSend()">送信</button>
     </div>
 </div>
 
+<!-- JS は STEP3 で追加するのでここは空のまま -->
 <script>
-/* ================== グローバル状態 ================== */
+   /* ===========================
+   グローバル状態
+=========================== */
 let currentLang = "jp";
 let galleryImages = [];
 let currentLightboxIndex = 0;
 
-/* ================== 多言語 ================== */
+/* ===========================
+   多言語切替
+=========================== */
 function setLang(lang) {
     currentLang = lang;
+
     if (lang === "jp") {
         document.getElementById("title-text").textContent = "ギャラリー";
         document.getElementById("subtitle-text").textContent =
@@ -394,26 +567,32 @@ function setLang(lang) {
     }
 }
 
-/* ================== テーマ ================== */
+/* ===========================
+   ダークモード
+=========================== */
 function toggleTheme() {
     document.body.classList.toggle("dark");
 }
 
-/* ================== ハンバーガー ================== */
+/* ===========================
+   ハンバーガーメニュー
+=========================== */
 function toggleMobileMenu() {
     const m = document.getElementById("nav-menu-mobile");
     m.style.display = (m.style.display === "block") ? "none" : "block";
 }
 
-/* ================== ギャラリー ================== */
+/* ===========================
+   ギャラリー読み込み
+=========================== */
 function filenameToCaption(name) {
     return name
         .replace(/\.[^/.]+$/, "")
         .replace(/#.*/g, "")
         .replace(/[_-]/g, " ")
-        .replace(/\s+/g, " ")
         .trim();
 }
+
 function extractTags(filename) {
     const base = filename.replace(/\.[^/.]+$/, "");
     const parts = base.split("#");
@@ -423,6 +602,7 @@ function extractTags(filename) {
 async function loadGalleryImages() {
     const apiUrl =
         "https://api.github.com/repos/bunkasai-2026/bunkasai-2026.github.io/contents/img";
+
     try {
         const res = await fetch(apiUrl);
         const data = await res.json();
@@ -438,19 +618,25 @@ async function loadGalleryImages() {
             }));
 
         galleryImages.sort(() => Math.random() - 0.5);
+
         renderTagButtons();
-        renderGallery();
+        setActiveTag(null); // ← 初期表示でALL
     } catch (e) {
         console.error("画像読み込みエラー:", e);
     }
 }
 
+/* ===========================
+   タグボタン
+=========================== */
 function renderTagButtons() {
     const container = document.getElementById("tag-filter");
     const tagSet = new Set();
+
     galleryImages.forEach(img => img.tags.forEach(t => tagSet.add(t)));
 
     container.innerHTML = "";
+
     const allBtn = document.createElement("button");
     allBtn.textContent = "ALL";
     allBtn.classList.add("active");
@@ -468,10 +654,12 @@ function renderTagButtons() {
 function setActiveTag(tag) {
     const buttons = document.querySelectorAll("#tag-filter button");
     buttons.forEach(b => b.classList.remove("active"));
+
     buttons.forEach(b => {
         if (!tag && b.textContent === "ALL") b.classList.add("active");
         if (tag && b.textContent === tag) b.classList.add("active");
     });
+
     filterByTag(tag);
 }
 
@@ -484,7 +672,7 @@ function filterByTag(tag) {
     filtered.forEach((item, index) => {
         const div = document.createElement("div");
         div.className = "gallery-item";
-        div.onclick = () => openLightbox(index, filtered);
+        div.onclick = () => openLightbox(index);
 
         if (item.type === "image") {
             const img = document.createElement("img");
@@ -509,12 +697,17 @@ function filterByTag(tag) {
     });
 }
 
-/* Lightbox */
+/* ===========================
+   Lightbox
+=========================== */
 function openLightbox(index) {
     currentLightboxIndex = index;
+
     const lb = document.getElementById("lightbox");
     const img = document.getElementById("lightbox-img");
     const vid = document.getElementById("lightbox-video");
+    const cap = document.getElementById("lightbox-caption");
+
     const item = galleryImages[currentLightboxIndex];
 
     lb.style.display = "flex";
@@ -528,17 +721,27 @@ function openLightbox(index) {
         vid.style.display = "block";
         vid.src = item.src;
     }
+
+    // タグから説明生成
+    if (item.tags.length > 0) {
+        cap.textContent = `このメディアには「${item.tags.join(", ")}」タグが付いているよ。`;
+    } else {
+        cap.textContent = item.caption;
+    }
 }
+
 function closeLightbox(event) {
     event.stopPropagation();
     document.getElementById("lightbox").style.display = "none";
 }
+
 function prevLightbox(event) {
     event.stopPropagation();
     currentLightboxIndex =
         (currentLightboxIndex - 1 + galleryImages.length) % galleryImages.length;
     openLightbox(currentLightboxIndex);
 }
+
 function nextLightbox(event) {
     event.stopPropagation();
     currentLightboxIndex =
@@ -546,60 +749,194 @@ function nextLightbox(event) {
     openLightbox(currentLightboxIndex);
 }
 
-/* ================== 簡易アシスタント ================== */
+/* ===========================
+   アシスタント辞書（JP/EN）
+=========================== */
 const assistantJP = {
     "こんにちは": "こんにちは！文化祭2026について何を知りたい？",
     "いつ": "文化祭は 2026年9月20日 開催予定だよ。",
     "どこ": "学校のメインキャンパスで開催されるよ。",
     "時間": "午前9時〜午後4時の予定だよ。",
     "企画": "クラス企画、ステージ、展示、飲食など盛りだくさん！",
+
+    "入場料": "入場料は無料だよ。誰でも参加できるよ。",
+    "ステージ": "ステージではダンス、バンド、演劇などが行われる予定だよ。",
+    "飲食": "焼きそば、クレープ、タピオカなどの模擬店が出る予定だよ。",
+    "混雑": "午前中は比較的空いていて、午後は混みやすいよ。",
+    "持ち物": "特に必要ないけど、スマホとお金があれば十分だよ。",
+    "雨天": "雨天でも開催されるよ。屋内企画も多いから安心してね。",
+    "写真": "写真撮影はOKだけど、他の人の顔が写る場合は注意してね。",
+    "動画": "動画撮影はOKだけど、ステージは一部禁止の演目があるよ。",
+    "迷子": "迷ったら本部に行けば案内してくれるよ。",
+    "おすすめ": "午後のステージ企画が特に盛り上がるからおすすめだよ。",
+
+    // ステージスケジュール（仮）
+    "ステージの時間": "ステージの詳しい時間は現在調整中だよ。決まり次第ここで案内する予定だよ。",
+
     "default": "文化祭について知りたいことを、短くキーワードで聞いてみて。"
 };
+
 const assistantEN = {
     "hello": "Hi! What do you want to know about Bunkasai 2026?",
     "when": "The festival is scheduled on September 20, 2026.",
     "where": "It will be held at the main school campus.",
     "time": "From 9:00 AM to 4:00 PM.",
     "events": "There will be class events, stage shows, exhibitions, and food stalls.",
+
+    "fee": "Admission is free for everyone.",
+    "stage": "The stage will feature dance, bands, and theater performances.",
+    "food": "There will be food stalls like yakisoba, crepes, and bubble tea.",
+    "crowd": "Mornings are less crowded, afternoons get busy.",
+    "items": "You don't need much—just your phone and some money.",
+    "rain": "The festival will be held even if it rains. Many events are indoors.",
+    "photo": "Photos are allowed, but be careful not to capture strangers' faces.",
+    "video": "Videos are allowed, but some stage acts may restrict recording.",
+    "lost": "If you get lost, go to the main information booth.",
+    "recommend": "The afternoon stage performances are highly recommended.",
+
+    "stage time": "The detailed stage schedule is still being adjusted. It will be announced here once confirmed.",
+
     "default": "Ask anything about the festival in short keywords."
 };
 
-function appendBubble(text, who) {
-    const chat = document.getElementById("assistant-chat");
-    const row = document.createElement("div");
-    row.className = "chat-row " + (who === "user" ? "user" : "bot");
-    const bubble = document.createElement("div");
-    bubble.className = "bubble " + (who === "user" ? "user" : "bot");
-    bubble.textContent = text;
-    row.appendChild(bubble);
-    chat.appendChild(row);
-    chat.scrollTop = chat.scrollHeight;
+/* ===========================
+   サンプル質問（カテゴリ別）
+=========================== */
+document.getElementById("assistant-samples").innerHTML = `
+<details open>
+    <summary>🎪 文化祭全般</summary>
+    <div class="sample-group">
+        <button onclick="assistantSample('いつ')">文化祭はいつ？</button>
+        <button onclick="assistantSample('どこ')">場所は？</button>
+        <button onclick="assistantSample('入場料')">入場料は？</button>
+        <button onclick="assistantSample('混雑')">混雑する時間帯は？</button>
+        <button onclick="assistantSample('雨天')">雨天時は？</button>
+    </div>
+</details>
+
+<details>
+    <summary>🍔 飲食</summary>
+    <div class="sample-group">
+        <button onclick="assistantSample('飲食')">飲食について</button>
+        <button onclick="assistantSample('おすすめ')">おすすめの模擬店</button>
+        <button onclick="assistantSample('アレルギー')">アレルギー対応</button>
+    </div>
+</details>
+
+<details>
+    <summary>🎤 ステージ</summary>
+    <div class="sample-group">
+        <button onclick="assistantSample('ステージ')">ステージについて</button>
+        <button onclick="assistantSample('ステージの時間')">ステージの時間</button>
+        <button onclick="assistantSample('動画')">撮影はOK？</button>
+    </div>
+</details>
+
+<details>
+    <summary>🏫 校内案内</summary>
+    <div class="sample-group">
+        <button onclick="assistantSample('迷子')">迷ったら？</button>
+        <button onclick="assistantSample('トイレ')">トイレはどこ？</button>
+        <button onclick="assistantSample('休憩')">休憩スペース</button>
+    </div>
+</details>
+`;
+
+/* ===========================
+   アシスタント送信
+=========================== */
+function assistantSample(text) {
+    document.getElementById("assistant-input").value = text;
+    assistantSend();
 }
 
 function assistantSend() {
     const inputEl = document.getElementById("assistant-input");
     const text = inputEl.value.trim();
     if (!text) return;
-    appendBubble(text, "user");
 
-    const key = text.toLowerCase();
-    const dict = (currentLang === "jp") ? assistantJP : assistantEN;
-    const res = dict[key] || dict["default"];
-    appendBubble(res, "bot");
+    appendBubble(text, "user");
     inputEl.value = "";
+
+    // 考え中アニメーション
+    const thinkingId = "thinking-" + Date.now();
+    appendThinking(thinkingId);
+
+    setTimeout(() => {
+        removeThinking(thinkingId);
+
+        const key = text.toLowerCase();
+        const dict = (currentLang === "jp") ? assistantJP : assistantEN;
+        let res = dict[key] || dict["default"];
+
+        // 自然な返事（前置き＋語尾バリエーション）
+        const prefixes = currentLang === "jp"
+            ? ["なるほど。", "いい質問だね。", "そうだね。", ""]
+            : ["Good question.", "I see.", "Alright.", ""];
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+
+        if (currentLang === "jp" && res.endsWith("よ。")) {
+            const tails = ["よ。", "ね。", "かな。", "と思うよ。"];
+            const base = res.replace(/よ。$/, "");
+            res = base + tails[Math.floor(Math.random() * tails.length)];
+        }
+
+        appendBubble(prefix ? prefix + "\n" + res : res, "bot");
+    }, 700 + Math.random() * 500);
 }
 
+function appendBubble(text, who) {
+    const chat = document.getElementById("assistant-chat");
+    const row = document.createElement("div");
+    row.className = "chat-row " + (who === "user" ? "user" : "bot");
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble " + (who === "user" ? "user" : "bot");
+    bubble.textContent = text;
+
+    row.appendChild(bubble);
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function appendThinking(id) {
+    const chat = document.getElementById("assistant-chat");
+    const row = document.createElement("div");
+    row.className = "chat-row bot";
+    row.id = id;
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble bot";
+    bubble.textContent = "…";
+
+    row.appendChild(bubble);
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function removeThinking(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+/* ===========================
+   アシスタント開閉
+=========================== */
 function toggleAssistant() {
     const box = document.getElementById("assistant-box");
     box.style.display = (box.style.display === "flex") ? "none" : "flex";
 }
 
-/* ================== 初期化 ================== */
+/* ===========================
+   初期化
+=========================== */
 document.addEventListener("DOMContentLoaded", () => {
     setLang("jp");
     loadGalleryImages();
 });
+
 </script>
 
 </body>
 </html>
+
