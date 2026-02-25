@@ -1,189 +1,605 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bunkasai 2026 - Gallery</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bunkasai 2026 - Gallery</title>
 
-    <!-- メインCSS -->
-    <link id="theme-style" rel="stylesheet" href="css/style.css">
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #000;
+        color: #fff;
+        user-select: none;
+        overflow-x: hidden;
+    }
+    img, video {
+        pointer-events: none;
+    }
 
-    <!-- 右クリック禁止・ドラッグ禁止 -->
-    <script>
-        document.addEventListener("contextmenu", e => e.preventDefault());
-        document.addEventListener("dragstart", e => e.preventDefault());
-        document.addEventListener("selectstart", e => e.preventDefault());
-    </script>
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+    }
+    .logo {
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+    nav {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+    nav a {
+        color: #ccc;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    nav a.active {
+        color: #fff;
+        font-weight: 600;
+    }
 
-    <style>
-        /* 背景動画 */
-        #bg-video {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: -2;
-        }
-        #background-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            z-index: -1;
-        }
+    .lang-toggle button,
+    .theme-toggle button {
+        margin-left: 6px;
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        background: #333;
+        color: #fff;
+    }
 
-        /* ギャラリー */
-        #gallery {
-            display: grid;
-            gap: 15px;
-            margin: 20px;
-        }
-        .gallery-grid {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        }
-        .gallery-item {
-            position: relative;
-            cursor: pointer;
-            overflow: hidden;
-        }
-        .gallery-item img,
-        .gallery-item video {
-            width: 100%;
-            height: auto;
-            pointer-events: none; /* 保存防止 */
-        }
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 4px;
+        cursor: pointer;
+    }
+    .hamburger span {
+        width: 20px;
+        height: 2px;
+        background: #fff;
+    }
+    #nav-menu-mobile {
+        display: none;
+        position: fixed;
+        top: 50px;
+        right: 10px;
+        background: rgba(0,0,0,0.95);
+        padding: 10px 16px;
+        border-radius: 8px;
+        z-index: 1001;
+    }
+    #nav-menu-mobile a {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        margin: 6px 0;
+        font-size: 14px;
+    }
 
-        /* 説明文 */
-        .caption {
-            text-align: center;
-            margin-top: 5px;
-            font-size: 14px;
-            color: #fff;
-        }
+    main {
+        padding: 16px;
+    }
 
-        /* タグボタン */
-        #tag-filter {
-            text-align: center;
-            margin: 20px 0;
-        }
-        #tag-filter button {
-            margin: 5px;
-            padding: 8px 15px;
-            border: none;
-            background: #444;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        #tag-filter button:hover {
-            background: #666;
-        }
+    h1 {
+        text-align: center;
+        margin: 10px 0 5px;
+    }
+    p.subtitle {
+        text-align: center;
+        font-size: 13px;
+        color: #aaa;
+        margin: 0 0 10px;
+    }
 
-        /* Lightbox（画像＋動画対応） */
-        #lightbox {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+    /* タグボタン */
+    #tag-filter {
+        text-align: center;
+        padding: 10px;
+    }
+    #tag-filter button {
+        margin: 4px;
+        padding: 6px 12px;
+        border: none;
+        background: #333;
+        color: #fff;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    #tag-filter button.active {
+        background: #0af;
+        color: #000;
+    }
+
+    /* ギャラリー */
+    #gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+        padding: 10px;
+    }
+    .gallery-item {
+        cursor: pointer;
+        text-align: center;
+        background: #111;
+        border-radius: 10px;
+        padding: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .gallery-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    .gallery-item img,
+    .gallery-item video {
+        width: 100%;
+        border-radius: 8px;
+    }
+    .caption {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #ddd;
+    }
+
+    /* Lightbox */
+    #lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+    }
+    #lightbox img,
+    #lightbox video {
+        max-width: 90%;
+        max-height: 80%;
+    }
+    #lightbox-close {
+        position: absolute;
+        top: 16px;
+        right: 24px;
+        font-size: 32px;
+        cursor: pointer;
+    }
+    #lightbox-prev,
+    #lightbox-next {
+        position: absolute;
+        top: 50%;
+        font-size: 40px;
+        cursor: pointer;
+        transform: translateY(-50%);
+        user-select: none;
+    }
+    #lightbox-prev { left: 24px; }
+    #lightbox-next { right: 24px; }
+
+    /* チャット */
+    #assistant-button {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: none;
+        background: radial-gradient(circle at 30% 30%, #0ff, #06f);
+        color: #fff;
+        font-size: 22px;
+        cursor: pointer;
+        z-index: 3000;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    #assistant-box {
+        position: fixed;
+        right: 16px;
+        bottom: 80px;
+        width: 280px;
+        max-height: 360px;
+        background: #111;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 3001;
+    }
+    #assistant-header {
+        padding: 8px 10px;
+        background: #222;
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    #assistant-chat {
+        flex: 1;
+        padding: 8px;
+        overflow-y: auto;
+        font-size: 12px;
+    }
+    .chat-row {
+        margin-bottom: 6px;
+        display: flex;
+    }
+    .chat-row.user {
+        justify-content: flex-end;
+    }
+    .chat-row.bot {
+        justify-content: flex-start;
+    }
+    .bubble {
+        max-width: 80%;
+        padding: 6px 8px;
+        border-radius: 10px;
+    }
+    .bubble.user {
+        background: #0af;
+        color: #000;
+    }
+    .bubble.bot {
+        background: #333;
+        color: #fff;
+    }
+    #assistant-input-area {
+        display: flex;
+        border-top: 1px solid #333;
+    }
+    #assistant-input {
+        flex: 1;
+        border: none;
+        padding: 6px;
+        font-size: 12px;
+        background: #111;
+        color: #fff;
+    }
+    #assistant-send {
+        width: 60px;
+        border: none;
+        background: #0af;
+        color: #000;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    /* ダークモード用クラス（簡易） */
+    body.dark {
+        background: #050505;
+        color: #f5f5f5;
+    }
+    body.dark .gallery-item {
+        background: #151515;
+    }
+
+    @media (max-width: 768px) {
+        nav.desktop {
             display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 99998;
         }
-        #lightbox img,
-        #lightbox video {
-            max-width: 90%;
-            max-height: 80%;
+        .hamburger {
+            display: flex;
         }
-        #lightbox-close {
-            position: absolute;
-            top: 20px; right: 30px;
-            font-size: 40px;
-            color: white;
-            cursor: pointer;
+    }
+    @media (min-width: 769px) {
+        #nav-menu-mobile {
+            display: none !important;
         }
-        #lightbox-prev,
-        #lightbox-next {
-            position: absolute;
-            top: 50%;
-            font-size: 50px;
-            color: white;
-            cursor: pointer;
-        }
-        #lightbox-prev { left: 30px; }
-        #lightbox-next { right: 30px; }
-
-        /* チャットが隠れないように */
-        #assistant-button,
-        #assistant-box {
-            z-index: 99999 !important;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
 
 <header>
     <div class="logo">Bunkasai 2026</div>
-    <div class="hamburger" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-    </div>
 
-    <nav id="nav-menu">
-        <ul>
-            <li><a href="index.html" class="nav-link">Home</a></li>
-            <li><a href="about.html" class="nav-link">About</a></li>
-            <li><a href="events.html" class="nav-link">Events</a></li>
-            <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
-            <li><a href="contact.html" class="nav-link">Contact</a></li>
-
-            <li><button onclick="setLang('jp')">日本語</button></li>
-            <li><button onclick="setLang('en')">English</button></li>
-            <li><button onclick="toggleDarkMode()">Dark</button></li>
-        </ul>
+    <nav class="desktop">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="events.html">Events</a>
+        <a href="gallery.html" class="active">Gallery</a>
+        <a href="contact.html">Contact</a>
     </nav>
+
+    <div style="display:flex; align-items:center; gap:6px;">
+        <div class="lang-toggle">
+            <button onclick="setLang('jp')">日本語</button>
+            <button onclick="setLang('en')">English</button>
+        </div>
+        <div class="theme-toggle">
+            <button onclick="toggleTheme()">Dark</button>
+        </div>
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
 </header>
 
+<div id="nav-menu-mobile">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="events.html">Events</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="contact.html">Contact</a>
+</div>
+
 <main>
-    <section class="lang lang-jp">
-        <h1>ギャラリー</h1>
-        <p>写真フォルダに入れた画像が自動で表示されます。</p>
-    </section>
+    <h1 id="title-text">Gallery</h1>
+    <p class="subtitle" id="subtitle-text">
+        GitHub の img フォルダから自動で画像・動画を読み込みます。
+    </p>
 
-    <section class="lang lang-en">
-        <h1>Gallery</h1>
-        <p>Images placed in the folder will automatically appear here.</p>
-    </section>
-
-    <!-- タグフィルター -->
     <div id="tag-filter"></div>
-
-    <!-- ギャラリー -->
-    <div id="gallery" class="gallery-grid"></div>
+    <div id="gallery"></div>
 </main>
 
-<!-- Lightbox（画像＋動画対応） -->
+<!-- Lightbox -->
 <div id="lightbox" onclick="closeLightbox(event)">
     <span id="lightbox-close" onclick="closeLightbox(event)">×</span>
-
-    <img id="lightbox-img" src="" alt="">
+    <img id="lightbox-img">
     <video id="lightbox-video" controls></video>
-
     <div id="lightbox-prev" onclick="prevLightbox(event)">‹</div>
     <div id="lightbox-next" onclick="nextLightbox(event)">›</div>
 </div>
 
-<!-- チャット -->
-<div id="assistant-button" onclick="toggleAssistant()">💬</div>
+<!-- Assistant -->
+<button id="assistant-button" onclick="toggleAssistant()">💬</button>
 <div id="assistant-box">
-    <div id="assistant-header">Bunkasai AI</div>
+    <div id="assistant-header">
+        <span id="assistant-title">Bunkasai Assistant</span>
+        <span style="cursor:pointer;" onclick="toggleAssistant()">×</span>
+    </div>
     <div id="assistant-chat"></div>
-    <div id="assistant-input-row">
-        <input id="assistant-input" type="text" onkeydown="if(event.key==='Enter') assistantSend()">
-        <button id="assistant-send" onclick="assistantSend()">▶</button>
+    <div id="assistant-input-area">
+        <input id="assistant-input" type="text" placeholder="質問を入力..." onkeydown="if(event.key==='Enter') assistantSend();">
+        <button id="assistant-send" onclick="assistantSend()">送信</button>
     </div>
 </div>
 
-<script src="js/menu.js"></script>
+<script>
+/* ================== グローバル状態 ================== */
+let currentLang = "jp";
+let galleryImages = [];
+let currentLightboxIndex = 0;
+
+/* ================== 多言語 ================== */
+function setLang(lang) {
+    currentLang = lang;
+    if (lang === "jp") {
+        document.getElementById("title-text").textContent = "ギャラリー";
+        document.getElementById("subtitle-text").textContent =
+            "GitHub の img フォルダから自動で画像・動画を読み込みます。";
+        document.getElementById("assistant-title").textContent = "文化祭アシスタント";
+        document.getElementById("assistant-input").placeholder = "文化祭について質問してみて...";
+    } else {
+        document.getElementById("title-text").textContent = "Gallery";
+        document.getElementById("subtitle-text").textContent =
+            "Images and videos are automatically loaded from the GitHub img folder.";
+        document.getElementById("assistant-title").textContent = "Bunkasai Assistant";
+        document.getElementById("assistant-input").placeholder = "Ask about the festival...";
+    }
+}
+
+/* ================== テーマ ================== */
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+}
+
+/* ================== ハンバーガー ================== */
+function toggleMobileMenu() {
+    const m = document.getElementById("nav-menu-mobile");
+    m.style.display = (m.style.display === "block") ? "none" : "block";
+}
+
+/* ================== ギャラリー ================== */
+function filenameToCaption(name) {
+    return name
+        .replace(/\.[^/.]+$/, "")
+        .replace(/#.*/g, "")
+        .replace(/[_-]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+function extractTags(filename) {
+    const base = filename.replace(/\.[^/.]+$/, "");
+    const parts = base.split("#");
+    return parts.slice(1);
+}
+
+async function loadGalleryImages() {
+    const apiUrl =
+        "https://api.github.com/repos/bunkasai-2026/bunkasai-2026.github.io/contents/img";
+    try {
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        galleryImages = data
+            .filter(item => item.type === "file")
+            .filter(item => /\.(jpg|jpeg|png|gif|webp|mp4|webm)$/i.test(item.name))
+            .map(item => ({
+                src: item.download_url,
+                type: /\.(mp4|webm)$/i.test(item.name) ? "video" : "image",
+                caption: filenameToCaption(item.name),
+                tags: extractTags(item.name)
+            }));
+
+        galleryImages.sort(() => Math.random() - 0.5);
+        renderTagButtons();
+        renderGallery();
+    } catch (e) {
+        console.error("画像読み込みエラー:", e);
+    }
+}
+
+function renderTagButtons() {
+    const container = document.getElementById("tag-filter");
+    const tagSet = new Set();
+    galleryImages.forEach(img => img.tags.forEach(t => tagSet.add(t)));
+
+    container.innerHTML = "";
+    const allBtn = document.createElement("button");
+    allBtn.textContent = "ALL";
+    allBtn.classList.add("active");
+    allBtn.onclick = () => setActiveTag(null);
+    container.appendChild(allBtn);
+
+    tagSet.forEach(tag => {
+        const btn = document.createElement("button");
+        btn.textContent = tag;
+        btn.onclick = () => setActiveTag(tag);
+        container.appendChild(btn);
+    });
+}
+
+function setActiveTag(tag) {
+    const buttons = document.querySelectorAll("#tag-filter button");
+    buttons.forEach(b => b.classList.remove("active"));
+    buttons.forEach(b => {
+        if (!tag && b.textContent === "ALL") b.classList.add("active");
+        if (tag && b.textContent === tag) b.classList.add("active");
+    });
+    filterByTag(tag);
+}
+
+function filterByTag(tag) {
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+
+    const filtered = galleryImages.filter(img => !tag || img.tags.includes(tag));
+
+    filtered.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "gallery-item";
+        div.onclick = () => openLightbox(index, filtered);
+
+        if (item.type === "image") {
+            const img = document.createElement("img");
+            img.src = item.src;
+            div.appendChild(img);
+        } else {
+            const vid = document.createElement("video");
+            vid.src = item.src;
+            vid.muted = true;
+            vid.loop = true;
+            vid.autoplay = true;
+            vid.playsInline = true;
+            div.appendChild(vid);
+        }
+
+        const cap = document.createElement("div");
+        cap.className = "caption";
+        cap.textContent = item.caption;
+        div.appendChild(cap);
+
+        gallery.appendChild(div);
+    });
+}
+
+/* Lightbox */
+function openLightbox(index) {
+    currentLightboxIndex = index;
+    const lb = document.getElementById("lightbox");
+    const img = document.getElementById("lightbox-img");
+    const vid = document.getElementById("lightbox-video");
+    const item = galleryImages[currentLightboxIndex];
+
+    lb.style.display = "flex";
+
+    if (item.type === "image") {
+        img.style.display = "block";
+        vid.style.display = "none";
+        img.src = item.src;
+    } else {
+        img.style.display = "none";
+        vid.style.display = "block";
+        vid.src = item.src;
+    }
+}
+function closeLightbox(event) {
+    event.stopPropagation();
+    document.getElementById("lightbox").style.display = "none";
+}
+function prevLightbox(event) {
+    event.stopPropagation();
+    currentLightboxIndex =
+        (currentLightboxIndex - 1 + galleryImages.length) % galleryImages.length;
+    openLightbox(currentLightboxIndex);
+}
+function nextLightbox(event) {
+    event.stopPropagation();
+    currentLightboxIndex =
+        (currentLightboxIndex + 1) % galleryImages.length;
+    openLightbox(currentLightboxIndex);
+}
+
+/* ================== 簡易アシスタント ================== */
+const assistantJP = {
+    "こんにちは": "こんにちは！文化祭2026について何を知りたい？",
+    "いつ": "文化祭は 2026年9月20日 開催予定だよ。",
+    "どこ": "学校のメインキャンパスで開催されるよ。",
+    "時間": "午前9時〜午後4時の予定だよ。",
+    "企画": "クラス企画、ステージ、展示、飲食など盛りだくさん！",
+    "default": "文化祭について知りたいことを、短くキーワードで聞いてみて。"
+};
+const assistantEN = {
+    "hello": "Hi! What do you want to know about Bunkasai 2026?",
+    "when": "The festival is scheduled on September 20, 2026.",
+    "where": "It will be held at the main school campus.",
+    "time": "From 9:00 AM to 4:00 PM.",
+    "events": "There will be class events, stage shows, exhibitions, and food stalls.",
+    "default": "Ask anything about the festival in short keywords."
+};
+
+function appendBubble(text, who) {
+    const chat = document.getElementById("assistant-chat");
+    const row = document.createElement("div");
+    row.className = "chat-row " + (who === "user" ? "user" : "bot");
+    const bubble = document.createElement("div");
+    bubble.className = "bubble " + (who === "user" ? "user" : "bot");
+    bubble.textContent = text;
+    row.appendChild(bubble);
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function assistantSend() {
+    const inputEl = document.getElementById("assistant-input");
+    const text = inputEl.value.trim();
+    if (!text) return;
+    appendBubble(text, "user");
+
+    const key = text.toLowerCase();
+    const dict = (currentLang === "jp") ? assistantJP : assistantEN;
+    const res = dict[key] || dict["default"];
+    appendBubble(res, "bot");
+    inputEl.value = "";
+}
+
+function toggleAssistant() {
+    const box = document.getElementById("assistant-box");
+    box.style.display = (box.style.display === "flex") ? "none" : "flex";
+}
+
+/* ================== 初期化 ================== */
+document.addEventListener("DOMContentLoaded", () => {
+    setLang("jp");
+    loadGalleryImages();
+});
+</script>
+
 </body>
 </html>
